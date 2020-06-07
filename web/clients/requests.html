@@ -154,22 +154,21 @@
 <h2><a class="header" href="#make-a-http-get-request" id="make-a-http-get-request">Make a HTTP GET request</a></h2>
 <p><a href="https://docs.rs/reqwest/"><img src="https://badge-cache.kominick.com/crates/v/reqwest.svg?label=reqwest" alt="reqwest-badge" /></a> <a href="https://crates.io/categories/network-programming"><img src="https://badge-cache.kominick.com/badge/net--x.svg?style=social" alt="cat-net-badge" /></a></p>
 <p>Parses the supplied URL and makes a synchronous HTTP GET request
-with <a href="https://docs.rs/reqwest/*/reqwest/fn.get.html"><code>reqwest::get</code></a>. Prints obtained <a href="https://docs.rs/reqwest/*/reqwest/struct.Response.html"><code>reqwest::Response</code></a>
+with <a href="https://docs.rs/reqwest/*/reqwest/blocking/fn.get.html"><code>reqwest::blocking::get</code></a>. Prints obtained <a href="https://docs.rs/reqwest/*/reqwest/blocking/struct.Response.html"><code>reqwest::blocking::Response</code></a>
 status and headers. Reads HTTP response body into an allocated <a href="https://doc.rust-lang.org/std/string/struct.String.html"><code>String</code></a>
 using <a href="https://doc.rust-lang.org/std/io/trait.Read.html#method.read_to_string"><code>read_to_string</code></a>.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run"><span class="boring">use error_chain::error_chain;
-</span>
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use error_chain::error_chain;
 use std::io::Read;
-<span class="boring">
-</span><span class="boring">error_chain! {
-</span><span class="boring">    foreign_links {
-</span><span class="boring">        Io(std::io::Error);
-</span><span class="boring">        HttpRequest(reqwest::Error);
-</span><span class="boring">    }
-</span><span class="boring">}
-</span>
+
+error_chain! {
+    foreign_links {
+        Io(std::io::Error);
+        HttpRequest(reqwest::Error);
+    }
+}
+
 fn main() -&gt; Result&lt;()&gt; {
-    let mut res = reqwest::get(&quot;http://httpbin.org/get&quot;)?;
+    let mut res = reqwest::blocking::get(&quot;http://httpbin.org/get&quot;)?;
     let mut body = String::new();
     res.read_to_string(&amp;mut body)?;
 
@@ -178,6 +177,25 @@ fn main() -&gt; Result&lt;()&gt; {
     println!(&quot;Body:\n{}&quot;, body);
 
     Ok(())
+}
+
+</code></pre></pre>
+<h2><a class="header" href="#async" id="async">Async</a></h2>
+<p>A similar approach can be used by including the <a href="https://docs.rs/crate/tokio/0.2.11"><code>tokio</code></a> executor
+to make the main function asynchronous, retrieving the same information.</p>
+<p>In this example, <a href="https://tokio.rs/docs/getting-started/hello-world/#let-s-write-some-code"><code>tokio::main</code></a> handles all the heavy executor setup
+and allows sequential code implemented without blocking until <code>.await</code>.</p>
+<p>Uses the asynchronous versions of <a href="https://docs.rs/reqwest/">reqwest</a>, both <a href="https://docs.rs/reqwest/*/reqwest/fn.get.html"><code>reqwest::get</code></a> and
+[`reqwest::Response].</p>
+<pre><pre class="playpen"><code class="language-rust no_run">#[tokio::main]
+async fn main() -&gt; Result&lt;(), Box&lt;dyn std::error::Error &gt;&gt; {
+        let res = reqwest::get(&quot;http://httpbin.org/get&quot;).await?;
+        println!(&quot;Status: {}&quot;, res.status());
+        println!(&quot;Headers:\n{:#?}&quot;, res.headers());
+
+        let body = res.text().await?;
+        println!(&quot;Body:\n{}&quot;, body);
+        Ok(())
 }
 </code></pre></pre>
 <!--

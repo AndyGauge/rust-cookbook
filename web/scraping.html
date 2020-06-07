@@ -158,93 +158,100 @@
 <a href="https://docs.rs/select/*/select/document/struct.Document.html#method.find"><code>find</code></a> with the criteria of <a href="https://docs.rs/select/*/select/predicate/struct.Name.html"><code>Name</code></a> is &quot;a&quot; retrieves all links.
 Call <a href="https://doc.rust-lang.org/core/iter/trait.Iterator.html#method.filter_map"><code>filter_map</code></a> on the <a href="https://docs.rs/select/*/select/selection/struct.Selection.html"><code>Selection</code></a> retrieves URLs
 from links that have the &quot;href&quot; <a href="https://docs.rs/select/*/select/node/struct.Node.html#method.attr"><code>attr</code></a> (attribute).</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run"><span class="boring">use error_chain::error_chain;
-</span>
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use error_chain::error_chain;
 use select::document::Document;
 use select::predicate::Name;
-<span class="boring">
-</span><span class="boring">error_chain! {
-</span><span class="boring">   foreign_links {
-</span><span class="boring">       ReqError(reqwest::Error);
-</span><span class="boring">       IoError(std::io::Error);
-</span><span class="boring">   }
-</span><span class="boring">}
-</span>
-fn main() -&gt; Result&lt;()&gt; {
-    let res = reqwest::get(&quot;https://www.rust-lang.org/en-US/&quot;)?;
 
-    Document::from_read(res)?
-        .find(Name(&quot;a&quot;))
-        .filter_map(|n| n.attr(&quot;href&quot;))
-        .for_each(|x| println!(&quot;{}&quot;, x));
-
-    Ok(())
+error_chain! {
+      foreign_links {
+          ReqError(reqwest::Error);
+          IoError(std::io::Error);
+      }
 }
+
+#[tokio::main]
+async fn main() -&gt; Result&lt;()&gt; {
+  let res = reqwest::get(&quot;https://www.rust-lang.org/en-US/&quot;)
+    .await?
+    .text()
+    .await?;
+
+  Document::from(res.as_str())
+    .find(Name(&quot;a&quot;))
+    .filter_map(|n| n.attr(&quot;href&quot;))
+    .for_each(|x| println!(&quot;{}&quot;, x));
+
+  Ok(())
+}
+
 </code></pre></pre>
 <h2><a class="header" href="#check-a-webpage-for-broken-links" id="check-a-webpage-for-broken-links">Check a webpage for broken links</a></h2>
 <p><a href="https://docs.rs/reqwest/"><img src="https://badge-cache.kominick.com/crates/v/reqwest.svg?label=reqwest" alt="reqwest-badge" /></a> <a href="https://docs.rs/select/"><img src="https://badge-cache.kominick.com/crates/v/select.svg?label=select" alt="select-badge" /></a> <a href="https://docs.rs/url/"><img src="https://badge-cache.kominick.com/crates/v/url.svg?label=url" alt="url-badge" /></a> <a href="https://crates.io/categories/network-programming"><img src="https://badge-cache.kominick.com/badge/net--x.svg?style=social" alt="cat-net-badge" /></a></p>
 <p>Call <code>get_base_url</code> to retrieve the base URL. If the document has a base tag,
 get the href <a href="https://docs.rs/select/*/select/node/struct.Node.html#method.attr"><code>attr</code></a> from base tag. <a href="https://docs.rs/url/*/url/enum.Position.html#variant.BeforePath"><code>Position::BeforePath</code></a> of the original
 URL acts as a default.</p>
-<p>Iterate through links in the document and parse with <a href="https://docs.rs/url/*/url/struct.ParseOptions.html"><code>url::ParseOptions</code></a>
-and <a href="https://docs.rs/url/*/url/struct.Url.html#method.parse"><code>Url::parse</code></a>). Makes a request to the links with reqwest and verifies
-<a href="https://docs.rs/reqwest/*/reqwest/struct.StatusCode.html"><code>StatusCode</code></a>.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run"><span class="boring">use error_chain::error_chain;
-</span>
-use std::collections::HashSet;
-
-use url::{Url, Position};
+<p>Iterates through links in the document and creates a <a href="https://docs.rs/tokio/*/tokio/fn.spawn.html"><code>tokio::spawn</code></a> task that will 
+parse an individual link with <a href="https://docs.rs/url/*/url/struct.ParseOptions.html"><code>url::ParseOptions</code></a> and <a href="https://docs.rs/url/*/url/struct.Url.html#method.parse"><code>Url::parse</code></a>). 
+The task makes a request to the links with <a href="https://docs.rs/reqwest/">reqwest</a> and verifies
+<a href="https://docs.rs/reqwest/*/reqwest/struct.StatusCode.html"><code>StatusCode</code></a>.  Then the tasks <code>await</code> completion before ending the program.</p>
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use error_chain::error_chain;
 use reqwest::StatusCode;
 use select::document::Document;
 use select::predicate::Name;
-<span class="boring">
-</span><span class="boring">error_chain! {
-</span><span class="boring">  foreign_links {
-</span><span class="boring">      ReqError(reqwest::Error);
-</span><span class="boring">      IoError(std::io::Error);
-</span><span class="boring">      UrlParseError(url::ParseError);
-</span><span class="boring">  }
-</span><span class="boring">}
-</span>
-fn get_base_url(url: &amp;Url, doc: &amp;Document) -&gt; Result&lt;Url&gt; {
-    let base_tag_href = doc.find(Name(&quot;base&quot;)).filter_map(|n| n.attr(&quot;href&quot;)).nth(0);
+use std::collections::HashSet;
+use tokio::stream::{self, StreamExt};
+use url::{Position, Url};
 
-    let base_url = base_tag_href.map_or_else(
-        || Url::parse(&amp;url[..Position::BeforePath]),
-        Url::parse,
-    )?;
-
-    Ok(base_url)
+error_chain! {
+  foreign_links {
+      ReqError(reqwest::Error);
+      IoError(std::io::Error);
+      UrlParseError(url::ParseError);
+      JoinError(tokio::task::JoinError);
+  }
 }
 
-fn check_link(url: &amp;Url) -&gt; Result&lt;bool&gt; {
-    let res = reqwest::get(url.as_ref())?;
-
-    Ok(res.status() != StatusCode::NOT_FOUND)
+async fn get_base_url(url: &amp;Url, doc: &amp;Document) -&gt; Result&lt;Url&gt; {
+  let base_tag_href = doc.find(Name(&quot;base&quot;)).filter_map(|n| n.attr(&quot;href&quot;)).nth(0);
+  let base_url =
+    base_tag_href.map_or_else(|| Url::parse(&amp;url[..Position::BeforePath]), Url::parse)?;
+  Ok(base_url)
 }
 
-fn main() -&gt; Result&lt;()&gt; {
-    let url = Url::parse(&quot;https://www.rust-lang.org/en-US/&quot;)?;
+async fn check_link(url: &amp;Url) -&gt; Result&lt;bool&gt; {
+  let res = reqwest::get(url.as_ref()).await?;
+  Ok(res.status() != StatusCode::NOT_FOUND)
+}
 
-    let res = reqwest::get(url.as_ref())?;
-    let document = Document::from_read(res)?;
+#[tokio::main]
+async fn main() -&gt; Result&lt;()&gt; {
+  let url = Url::parse(&quot;https://www.rust-lang.org/en-US/&quot;)?;
+  let res = reqwest::get(url.as_ref()).await?.text().await?;
+  let document = Document::from(res.as_str());
+  let base_url = get_base_url(&amp;url, &amp;document).await?;
+  let base_parser = Url::options().base_url(Some(&amp;base_url));
+  let links: HashSet&lt;Url&gt; = document
+    .find(Name(&quot;a&quot;))
+    .filter_map(|n| n.attr(&quot;href&quot;))
+    .filter_map(|link| base_parser.parse(link).ok())
+    .collect();
+    let mut tasks = vec![];
 
-    let base_url = get_base_url(&amp;url, &amp;document)?;
+    for link in links {
+        tasks.push(tokio::spawn(async move {
+            if check_link(&amp;link).await.unwrap() {
+                println!(&quot;{} is OK&quot;, link);
+            } else {
+                println!(&quot;{} is Broken&quot;, link);
+            }
+        }));
+    }
 
-    let base_parser = Url::options().base_url(Some(&amp;base_url));
+    for task in tasks {
+        task.await?
+    }
 
-    let links: HashSet&lt;Url&gt; = document
-        .find(Name(&quot;a&quot;))
-        .filter_map(|n| n.attr(&quot;href&quot;))
-        .filter_map(|link| base_parser.parse(link).ok())
-        .collect();
-
-    links
-        .iter()
-        .filter(|link| check_link(link).ok() == Some(false))
-        .for_each(|x| println!(&quot;{} is broken.&quot;, x));
-
-    Ok(())
+  Ok(())
 }
 </code></pre></pre>
 <h2><a class="header" href="#extract-all-unique-links-from-a-mediawiki-markup" id="extract-all-unique-links-from-a-mediawiki-markup">Extract all unique links from a MediaWiki markup</a></h2>
@@ -253,55 +260,50 @@ fn main() -&gt; Result&lt;()&gt; {
 look for all entries of internal and external links with
 <a href="https://docs.rs/regex/*/regex/struct.Regex.html#method.captures_iter"><code>Regex::captures_iter</code></a>. Using <a href="https://doc.rust-lang.org/std/borrow/enum.Cow.html"><code>Cow</code></a> avoids excessive <a href="https://doc.rust-lang.org/std/string/struct.String.html"><code>String</code></a> allocations.</p>
 <p>MediaWiki link syntax is described <a href="https://www.mediawiki.org/wiki/Help:Links">here</a>.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run"><span class="boring">use error_chain::error_chain;
-</span>use lazy_static::lazy_static;
-
-use std::io::Read;
-use std::collections::HashSet;
-use std::borrow::Cow;
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use lazy_static::lazy_static;
 use regex::Regex;
+use std::borrow::Cow;
+use std::collections::HashSet;
+use std::error::Error;
 
-<span class="boring">error_chain! {
-</span><span class="boring">    foreign_links {
-</span><span class="boring">        Io(std::io::Error);
-</span><span class="boring">        Reqwest(reqwest::Error);
-</span><span class="boring">        Regex(regex::Error);
-</span><span class="boring">    }
-</span><span class="boring">}
-</span><span class="boring">
-</span>fn extract_links(content: &amp;str) -&gt; Result&lt;HashSet&lt;Cow&lt;str&gt;&gt;&gt; {
-    lazy_static! {
-        static ref WIKI_REGEX: Regex =
-            Regex::new(r&quot;(?x)
+fn extract_links(content: &amp;str) -&gt; HashSet&lt;Cow&lt;str&gt;&gt; {
+  lazy_static! {
+    static ref WIKI_REGEX: Regex = Regex::new(
+      r&quot;(?x)
                 \[\[(?P&lt;internal&gt;[^\[\]|]*)[^\[\]]*\]\]    # internal links
                 |
                 (url=|URL\||\[)(?P&lt;external&gt;http.*?)[ \|}] # external links
-            &quot;).unwrap();
-    }
+            &quot;
+    )
+    .unwrap();
+  }
 
-    let links: HashSet&lt;_&gt; = WIKI_REGEX
-        .captures_iter(content)
-        .map(|c| match (c.name(&quot;internal&quot;), c.name(&quot;external&quot;)) {
-            (Some(val), None) =&gt; Cow::from(val.as_str().to_lowercase()),
-            (None, Some(val)) =&gt; Cow::from(val.as_str()),
-            _ =&gt; unreachable!(),
-        })
-        .collect();
+  let links: HashSet&lt;_&gt; = WIKI_REGEX
+    .captures_iter(content)
+    .map(|c| match (c.name(&quot;internal&quot;), c.name(&quot;external&quot;)) {
+      (Some(val), None) =&gt; Cow::from(val.as_str().to_lowercase()),
+      (None, Some(val)) =&gt; Cow::from(val.as_str()),
+      _ =&gt; unreachable!(),
+    })
+    .collect();
 
-    Ok(links)
+  links
 }
 
-fn main() -&gt; Result&lt;()&gt; {
-    let mut content = String::new();
-    reqwest::get(
-        &quot;https://en.wikipedia.org/w/index.php?title=Rust_(programming_language)&amp;action=raw&quot;,
-    )?
-        .read_to_string(&amp;mut content)?;
+#[tokio::main]
+async fn main() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {
+  let content = reqwest::get(
+    &quot;https://en.wikipedia.org/w/index.php?title=Rust_(programming_language)&amp;action=raw&quot;,
+  )
+  .await?
+  .text()
+  .await?;
 
-    println!(&quot;{:#?}&quot;, extract_links(&amp;content)?);
+  println!(&quot;{:#?}&quot;, extract_links(content.as_str()));
 
-    Ok(())
+  Ok(())
 }
+
 </code></pre></pre>
 <!--
 Links, in a few categories. Follow the existing structure.

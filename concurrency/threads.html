@@ -251,13 +251,13 @@ fn main() -&gt; Result&lt;()&gt; {
     Ok(())
 }
 </code></pre></pre>
-<h2><a class="header" href="#calculate-sha1-sum-of-iso-files-concurrently" id="calculate-sha1-sum-of-iso-files-concurrently">Calculate SHA1 sum of iso files concurrently</a></h2>
+<h2><a class="header" href="#calculate-sha256-sum-of-iso-files-concurrently" id="calculate-sha256-sum-of-iso-files-concurrently">Calculate SHA256 sum of iso files concurrently</a></h2>
 <p><a href="https://docs.rs/threadpool/"><img src="https://badge-cache.kominick.com/crates/v/threadpool.svg?label=threadpool" alt="threadpool-badge" /></a> <a href="https://docs.rs/num_cpus/"><img src="https://badge-cache.kominick.com/crates/v/num_cpus.svg?label=num_cpus" alt="num_cpus-badge" /></a> <a href="https://docs.rs/walkdir/"><img src="https://badge-cache.kominick.com/crates/v/walkdir.svg?label=walkdir" alt="walkdir-badge" /></a> <a href="https://briansmith.org/rustdoc/ring/"><img src="https://badge-cache.kominick.com/crates/v/ring.svg?label=ring" alt="ring-badge" /></a> <a href="https://crates.io/categories/concurrency"><img src="https://badge-cache.kominick.com/badge/concurrency--x.svg?style=social" alt="cat-concurrency-badge" /></a><a href="https://crates.io/categories/filesystem"><img src="https://badge-cache.kominick.com/badge/filesystem--x.svg?style=social" alt="cat-filesystem-badge" /></a></p>
-<p>This example calculates the SHA1 for every file with iso extension in the
+<p>This example calculates the SHA256 for every file with iso extension in the
 current directory. A threadpool generates threads equal to the number of cores
 present in the system found with <a href="https://docs.rs/num_cpus/*/num_cpus/fn.get.html"><code>num_cpus::get</code></a>.  <a href="https://docs.rs/walkdir/*/walkdir/struct.WalkDir.html#method.new"><code>Walkdir::new</code></a> iterates
 the current directory and calls <a href="https://docs.rs/threadpool/*/threadpool/struct.ThreadPool.html#method.execute"><code>execute</code></a> to perform the operations of reading
-and computing SHA1 hash.</p>
+and computing SHA256 hash.</p>
 <pre><pre class="playpen"><code class="language-rust edition2018 no_run">
 use walkdir::WalkDir;
 use std::fs::File;
@@ -265,7 +265,7 @@ use std::io::{BufReader, Read, Error};
 use std::path::Path;
 use threadpool::ThreadPool;
 use std::sync::mpsc::channel;
-use ring::digest::{Context, Digest, SHA1};
+use ring::digest::{Context, Digest, SHA256};
 
 <span class="boring">// Verify the iso extension
 </span><span class="boring">fn is_iso(entry: &amp;Path) -&gt; bool {
@@ -277,7 +277,7 @@ use ring::digest::{Context, Digest, SHA1};
 </span>
 fn compute_digest&lt;P: AsRef&lt;Path&gt;&gt;(filepath: P) -&gt; Result&lt;(Digest, P), Error&gt; {
     let mut buf_reader = BufReader::new(File::open(&amp;filepath)?);
-    let mut context = Context::new(&amp;SHA1);
+    let mut context = Context::new(&amp;SHA256);
     let mut buffer = [0; 1024];
 
     loop {

@@ -201,7 +201,7 @@ fn main() -&gt; Result&lt;()&gt; {
 <h2><a class="header" href="#sign-and-verify-a-message-with-hmac-digest" id="sign-and-verify-a-message-with-hmac-digest">Sign and verify a message with HMAC digest</a></h2>
 <p><a href="https://briansmith.org/rustdoc/ring/"><img src="https://badge-cache.kominick.com/crates/v/ring.svg?label=ring" alt="ring-badge" /></a> <a href="https://crates.io/categories/cryptography"><img src="https://badge-cache.kominick.com/badge/cryptography--x.svg?style=social" alt="cat-cryptography-badge" /></a></p>
 <p>Uses <a href="https://briansmith.org/rustdoc/ring/hmac/"><code>ring::hmac</code></a> to creates a <a href="https://briansmith.org/rustdoc/ring/hmac/struct.Signature.html"><code>hmac::Signature</code></a> of a string then verifies the signature is correct.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018">use ring::{digest, hmac, rand};
+<pre><pre class="playpen"><code class="language-rust edition2018">use ring::{hmac, rand};
 use ring::rand::SecureRandom;
 use ring::error::Unspecified;
 
@@ -209,11 +209,11 @@ fn main() -&gt; Result&lt;(), Unspecified&gt; {
     let mut key_value = [0u8; 48];
     let rng = rand::SystemRandom::new();
     rng.fill(&amp;mut key_value)?;
-    let key = hmac::SigningKey::new(&amp;digest::SHA256, &amp;key_value);
+    let key = hmac::Key::new(hmac::HMAC_SHA256, &amp;key_value);
 
     let message = &quot;Legitimate and important message.&quot;;
     let signature = hmac::sign(&amp;key, message.as_bytes());
-    hmac::verify_with_own_key(&amp;key, message.as_bytes(), signature.as_ref())?;
+    hmac::verify(&amp;key, message.as_bytes(), signature.as_ref())?;
 
     Ok(())
 }

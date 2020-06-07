@@ -203,21 +203,23 @@ fn main() {
 }
 </code></pre>
 <h2><a class="header" href="#generate-random-numbers-with-given-distribution" id="generate-random-numbers-with-given-distribution">Generate random numbers with given distribution</a></h2>
-<p><a href="https://docs.rs/rand/"><img src="https://badge-cache.kominick.com/crates/v/rand.svg?label=rand" alt="rand-badge" /></a> <a href="https://crates.io/categories/science"><img src="https://badge-cache.kominick.com/badge/science--x.svg?style=social" alt="cat-science-badge" /></a></p>
-<p>By default, random numbers have <a href="https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)">uniform distribution</a>.
-To generate numbers with other distributions you instantiate a
-distribution, then sample from that distribution using
+<p><a href="https://docs.rs/rand_distr/"><img src="https://badge-cache.kominick.com/crates/v/rand.svg?label=rand_distr" alt="rand_distr-badge" /></a> <a href="https://crates.io/categories/science"><img src="https://badge-cache.kominick.com/badge/science--x.svg?style=social" alt="cat-science-badge" /></a></p>
+<p>By default, random numbers in the <code>rand</code> crate have
+<a href="https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)">uniform distribution</a>. The <a href="https://docs.rs/rand_distr/*/rand_distr/index.html"><code>rand_distr</code></a> crate provides
+other kinds of distrubutions. To use them, you instantiate
+a distribution, then sample from that distribution using
 <a href="https://docs.rs/rand/*/rand/distributions/trait.Distribution.html#tymethod.sample"><code>Distribution::sample</code></a> with help of a random-number
 generator <a href="https://docs.rs/rand/*/rand/trait.Rng.html"><code>rand::Rng</code></a>.</p>
-<p>The <a href="https://docs.rs/rand/*/rand/distributions/index.html">distributions available are documented here</a>. An example using the
-<a href="https://docs.rs/rand/*/rand/distributions/normal/struct.Normal.html"><code>Normal</code></a> distribution is shown below.</p>
-<pre><code class="language-rust edition2018 ignore">use rand::distributions::{Normal, Distribution};
+<p>The <a href="https://docs.rs/rand_distr/*/rand_distr/index.html">distributions available are documented here</a>.
+An example using the <a href="https://docs.rs/rand_distr/*/rand_distr/struct.Normal.html"><code>Normal</code></a> distribution is shown below.</p>
+<pre><code class="language-rust edition2018 ignore">use rand_distr::{Distribution, Normal, NormalError};
 
-fn main() {
-  let mut rng = rand::thread_rng();
-  let normal = Normal::new(2.0, 3.0);
-  let v = normal.sample(&amp;mut rng);
-  println!(&quot;{} is from a N(2, 9) distribution&quot;, v)
+fn main() -&gt; Result&lt;(), NormalError&gt; {
+    let mut rng = rand::thread_rng();
+    let normal = Normal::new(2.0, 3.0)?;
+    let v = normal.sample(&amp;mut rng);
+    println!(&quot;{} is from a N(2, 9) distribution&quot;, v);
+    Ok(())
 }
 </code></pre>
 <h2><a class="header" href="#generate-random-values-of-a-custom-type" id="generate-random-values-of-a-custom-type">Generate random values of a custom type</a></h2>

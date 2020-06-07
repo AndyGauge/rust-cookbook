@@ -154,7 +154,10 @@
 <h2><a class="header" href="#query-the-github-api" id="query-the-github-api">Query the GitHub API</a></h2>
 <p><a href="https://docs.rs/reqwest/"><img src="https://badge-cache.kominick.com/crates/v/reqwest.svg?label=reqwest" alt="reqwest-badge" /></a> <a href="https://docs.rs/serde/"><img src="https://badge-cache.kominick.com/crates/v/serde.svg?label=serde" alt="serde-badge" /></a> <a href="https://crates.io/categories/network-programming"><img src="https://badge-cache.kominick.com/badge/net--x.svg?style=social" alt="cat-net-badge" /></a> <a href="https://crates.io/categories/encoding"><img src="https://badge-cache.kominick.com/badge/encoding--x.svg?style=social" alt="cat-encoding-badge" /></a></p>
 <p>Queries GitHub <a href="https://developer.github.com/v3/activity/starring/#list-stargazers">stargazers API v3</a>
-with <a href="https://docs.rs/reqwest/*/reqwest/fn.get.html"><code>reqwest::get</code></a> to get list of all users who have marked a GitHub project with a star. <a href="https://docs.rs/reqwest/*/reqwest/struct.Response.html"><code>reqwest::Response</code></a> is deserialized with <a href="https://docs.rs/reqwest/*/reqwest/struct.Response.html#method.json"><code>Response::json</code></a> into <code>User</code> objects implementing <a href="https://docs.rs/serde/*/serde/trait.Deserialize.html"><code>serde::Deserialize</code></a>.</p>
+with <a href="https://docs.rs/reqwest/*/reqwest/fn.get.html"><code>reqwest::get</code></a> to get list of all users who have marked a GitHub project with a star. 
+<a href="https://docs.rs/reqwest/*/reqwest/struct.Response.html"><code>reqwest::Response</code></a> is deserialized with <a href="https://docs.rs/reqwest/*/reqwest/struct.Response.html#method.json"><code>Response::json</code></a> into <code>User</code> objects implementing <a href="https://docs.rs/serde/*/serde/trait.Deserialize.html"><code>serde::Deserialize</code></a>.</p>
+<p>[tokio::main] is used to set up the async executor and the process waits for [<code>reqwet::get</code>] to complete before
+processing the response into User instances.</p>
 <pre><pre class="playpen"><code class="language-rust edition2018 no_run">use serde::Deserialize;
 use reqwest::Error;
 
@@ -164,14 +167,15 @@ struct User {
     id: u32,
 }
 
-fn main() -&gt; Result&lt;(), Error&gt; {
+#[tokio::main]
+async fn main() -&gt; Result&lt;(), Error&gt; {
     let request_url = format!(&quot;https://api.github.com/repos/{owner}/{repo}/stargazers&quot;,
                               owner = &quot;rust-lang-nursery&quot;,
                               repo = &quot;rust-cookbook&quot;);
     println!(&quot;{}&quot;, request_url);
-    let mut response = reqwest::get(&amp;request_url)?;
+    let response = reqwest::get(&amp;request_url).await?;
 
-    let users: Vec&lt;User&gt; = response.json()?;
+    let users: Vec&lt;User&gt; = response.json().await?;
     println!(&quot;{:?}&quot;, users);
     Ok(())
 }
@@ -183,20 +187,21 @@ request (<a href="https://docs.rs/reqwest/*/reqwest/struct.Client.html#method.he
 success. This is a quick way to query a rest resource without needing to receive
 a body. <a href="https://docs.rs/reqwest/*/reqwest/struct.Client.html"><code>reqwest::Client</code></a> cofigured with <a href="https://docs.rs/reqwest/*/reqwest/struct.ClientBuilder.html#method.timeout"><code>ClientBuilder::timeout</code></a> ensures
 a request will not last longer than a timeout.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run">
-use reqwest::Error;
+<p>Due to both <a href="https://docs.rs/reqwest/*/reqwest/struct.ClientBuilder.html#method.build"><code>ClientBuilder::build</code></a> and [<code>Client::send</code>] returning <a href="https://docs.rs/reqwest/*/reqwest/struct.Error.html"><code>reqwest::Error</code></a>
+types, the shortcut <a href="https://docs.rs/reqwest/*/reqwest/type.Result.html"><code>reqwest::Result</code></a> is used for the main return type. </p>
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use reqwest::Result;
 use std::time::Duration;
 use reqwest::ClientBuilder;
 
-
-fn main() -&gt; Result&lt;(), Error&gt; {
+#[tokio::main]
+async fn main() -&gt; Result&lt;()&gt; {
     let user = &quot;ferris-the-crab&quot;;
     let request_url = format!(&quot;https://api.github.com/users/{}&quot;, user);
     println!(&quot;{}&quot;, request_url);
 
     let timeout = Duration::new(5, 0);
     let client = ClientBuilder::new().timeout(timeout).build()?;
-    let response = client.head(&amp;request_url).send()?;
+    let response = client.head(&amp;request_url).send().await?;
 
     if response.status().is_success() {
         println!(&quot;{} is a user!&quot;, user);
@@ -216,27 +221,27 @@ URL, body and authentication. The POST body from <a href="https://docs.rs/serde_
 provides arbitrary JSON body. Call to <a href="https://docs.rs/reqwest/*/reqwest/struct.RequestBuilder.html#method.json"><code>RequestBuilder::json</code></a> sets the request
 body. <a href="https://docs.rs/reqwest/*/reqwest/struct.RequestBuilder.html#method.basic_auth"><code>RequestBuilder::basic_auth</code></a> handles authentication. The call to
 <a href="https://docs.rs/reqwest/*/reqwest/struct.RequestBuilder.html#method.send"><code>RequestBuilder::send</code></a> synchronously executes the requests.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run"><span class="boring">use error_chain::error_chain;
-</span>use serde::Deserialize;
- use serde_json::json;
-
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use error_chain::error_chain;
+use serde::Deserialize;
+use serde_json::json;
 use std::env;
 use reqwest::Client;
-<span class="boring">
-</span><span class="boring">error_chain! {
-</span><span class="boring">    foreign_links {
-</span><span class="boring">        EnvVar(env::VarError);
-</span><span class="boring">        HttpRequest(reqwest::Error);
-</span><span class="boring">    }
-</span><span class="boring">}
-</span>
+
+error_chain! {
+    foreign_links {
+        EnvVar(env::VarError);
+        HttpRequest(reqwest::Error);
+    }
+}
+
 #[derive(Deserialize, Debug)]
 struct Gist {
     id: String,
     html_url: String,
 }
 
-fn main() -&gt; Result&lt;()&gt; {
+#[tokio::main]
+async fn main() -&gt;  Result&lt;()&gt; {
     let gh_user = env::var(&quot;GH_USER&quot;)?;
     let gh_pass = env::var(&quot;GH_PASS&quot;)?;
 
@@ -250,20 +255,20 @@ fn main() -&gt; Result&lt;()&gt; {
         }});
 
     let request_url = &quot;https://api.github.com/gists&quot;;
-    let mut response = Client::new()
+    let response = Client::new()
         .post(request_url)
         .basic_auth(gh_user.clone(), Some(gh_pass.clone()))
         .json(&amp;gist_body)
-        .send()?;
+        .send().await?;
 
-    let gist: Gist = response.json()?;
+    let gist: Gist = response.json().await?;
     println!(&quot;Created {:?}&quot;, gist);
 
     let request_url = format!(&quot;{}/{}&quot;,request_url, gist.id);
     let response = Client::new()
         .delete(&amp;request_url)
         .basic_auth(gh_user, Some(gh_pass))
-        .send()?;
+        .send().await?;
 
     println!(&quot;Gist {} deleted! Status code: {}&quot;,gist.id, response.status());
     Ok(())
@@ -277,8 +282,8 @@ flows.</p>
 <p>Wraps a paginated web API in a convenient Rust iterator. The iterator lazily
 fetches the next page of results from the remote server as it arrives at the end
 of each page.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use serde::Deserialize;
-use reqwest::Error;
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use reqwest::Result;
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 struct ApiResponse {
@@ -299,25 +304,25 @@ struct Meta {
 struct ReverseDependencies {
     crate_id: String,
     dependencies: &lt;Vec&lt;Dependency&gt; as IntoIterator&gt;::IntoIter,
-    client: reqwest::Client,
+    client: reqwest::blocking::Client,
     page: u32,
     per_page: u32,
     total: u32,
 }
 
 impl ReverseDependencies {
-    fn of(crate_id: &amp;str) -&gt; Result&lt;Self, Error&gt; {
+    fn of(crate_id: &amp;str) -&gt; Result&lt;Self&gt; {
         Ok(ReverseDependencies {
                crate_id: crate_id.to_owned(),
                dependencies: vec![].into_iter(),
-               client: reqwest::Client::new(),
+               client: reqwest::blocking::Client::new(),
                page: 0,
                per_page: 100,
                total: 0,
            })
     }
 
-    fn try_next(&amp;mut self) -&gt; Result&lt;Option&lt;Dependency&gt;, Error&gt; {
+    fn try_next(&amp;mut self) -&gt; Result&lt;Option&lt;Dependency&gt;&gt; {
         if let Some(dep) = self.dependencies.next() {
             return Ok(Some(dep));
         }
@@ -340,7 +345,7 @@ impl ReverseDependencies {
 }
 
 impl Iterator for ReverseDependencies {
-    type Item = Result&lt;Dependency, Error&gt;;
+    type Item = Result&lt;Dependency&gt;;
 
     fn next(&amp;mut self) -&gt; Option&lt;Self::Item&gt; {
         match self.try_next() {
@@ -351,7 +356,7 @@ impl Iterator for ReverseDependencies {
     }
 }
 
-fn main() -&gt; Result&lt;(), Error&gt; {
+fn main() -&gt; Result&lt;()&gt; {
     for dep in ReverseDependencies::of(&quot;serde&quot;)? {
         println!(&quot;reverse dependency: {}&quot;, dep?.crate_id);
     }

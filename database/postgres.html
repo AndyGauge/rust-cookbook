@@ -153,25 +153,28 @@
                         <h1><a class="header" href="#working-with-postgres" id="working-with-postgres">Working with Postgres</a></h1>
 <h2><a class="header" href="#create-tables-in-a-postgres-database" id="create-tables-in-a-postgres-database">Create tables in a Postgres database</a></h2>
 <p><a href="https://docs.rs/postgres/0.15.2/postgres/"><img src="https://badge-cache.kominick.com/crates/v/postgres.svg?label=postgres" alt="postgres-badge" /></a> <a href="https://crates.io/categories/database"><img src="https://badge-cache.kominick.com/badge/database--x.svg?style=social" alt="cat-database-badge" /></a></p>
-<p>Use the <a href="https://docs.rs/postgres/0.15.2/postgres/"><code>postgres</code></a> crate to create tables in a Postgres database.</p>
-<p><a href="https://docs.rs/postgres/0.15.2/postgres/struct.Connection.html#method.connect"><code>Connection::connect</code></a> helps in connecting to an existing database. The recipe uses a URL string format with <code>Connection::connect</code>. It assumes an existing database named <code>library</code>, the username is <code>postgres</code> and the password is <code>postgres</code>.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use postgres::{Connection, TlsMode, Error};
+<p>Use the <a href="https://docs.rs/postgres/0.17.2/postgres/"><code>postgres</code></a> crate to create tables in a Postgres database.</p>
+<p><a href="https://docs.rs/postgres/0.17.2/postgres/struct.Client.html#method.connect"><code>Client::connect</code></a> helps in connecting to an existing database. The recipe uses a URL string format with <code>Client::connect</code>. It assumes an existing database named <code>library</code>, the username is <code>postgres</code> and the password is <code>postgres</code>.</p>
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use postgres::{Client, NoTls, Error};
 
 fn main() -&gt; Result&lt;(), Error&gt; {
-    let conn = Connection::connect(&quot;postgresql://postgres:postgres@localhost/library&quot;, 
-                                    TlsMode::None)?;
+    let mut client = Client::connect(&quot;postgresql://postgres:postgres@localhost/library&quot;, NoTls)?;
     
-     conn.execute(&quot;CREATE TABLE IF NOT EXISTS author (
-                    id              SERIAL PRIMARY KEY,
-                    name            VARCHAR NOT NULL,
-                    country         VARCHAR NOT NULL
-                  )&quot;, &amp;[])?;
+    client.batch_execute(&quot;
+        CREATE TABLE IF NOT EXISTS author (
+            id              SERIAL PRIMARY KEY,
+            name            VARCHAR NOT NULL,
+            country         VARCHAR NOT NULL
+            )
+    &quot;)?;
 
-    conn.execute(&quot;CREATE TABLE IF NOT EXISTS book  (
-                    id              SERIAL PRIMARY KEY,
-                    title           VARCHAR NOT NULL,
-                    author_id       INTEGER NOT NULL REFERENCES author
-                )&quot;, &amp;[])?;
+    client.batch_execute(&quot;
+        CREATE TABLE IF NOT EXISTS book  (
+            id              SERIAL PRIMARY KEY,
+            title           VARCHAR NOT NULL,
+            author_id       INTEGER NOT NULL REFERENCES author
+            )
+    &quot;)?;
 
     Ok(())
 
@@ -179,19 +182,19 @@ fn main() -&gt; Result&lt;(), Error&gt; {
 </code></pre></pre>
 <h2><a class="header" href="#insert-and-query-data" id="insert-and-query-data">Insert and Query data</a></h2>
 <p><a href="https://docs.rs/postgres/0.15.2/postgres/"><img src="https://badge-cache.kominick.com/crates/v/postgres.svg?label=postgres" alt="postgres-badge" /></a> <a href="https://crates.io/categories/database"><img src="https://badge-cache.kominick.com/badge/database--x.svg?style=social" alt="cat-database-badge" /></a></p>
-<p>The recipe inserts data into the <code>author</code> table using <a href="https://docs.rs/postgres/0.15.2/postgres/struct.Connection.html#method.execute"><code>execute</code></a> method of <code>Connection</code>. Then, displays the data from the <code>author</code> table  using <a href="https://docs.rs/postgres/0.15.2/postgres/struct.Connection.html#method.query"><code>query</code></a> method of <code>Connection</code>.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use postgres::{Connection, TlsMode, Error};
+<p>The recipe inserts data into the <code>author</code> table using <a href="https://docs.rs/postgres/0.17.2/postgres/struct.Client.html#method.execute"><code>execute</code></a> method of <code>Client</code>. Then, displays the data from the <code>author</code> table  using <a href="https://docs.rs/postgres/0.17.2/postgres/struct.Client.html#method.query"><code>query</code></a> method of <code>Client</code>.</p>
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use postgres::{Client, NoTls, Error};
 use std::collections::HashMap;
 
 struct Author {
-    id: i32,
+    _id: i32,
     name: String,
     country: String
 }
 
 fn main() -&gt; Result&lt;(), Error&gt; {
-    let conn = Connection::connect(&quot;postgresql://postgres:postgres@localhost/library&quot;, 
-                                    TlsMode::None)?;
+    let mut client = Client::connect(&quot;postgresql://postgres:postgres@localhost/library&quot;, 
+                                    NoTls)?;
     
     let mut authors = HashMap::new();
     authors.insert(String::from(&quot;Chinua Achebe&quot;), &quot;Nigeria&quot;);
@@ -200,18 +203,20 @@ fn main() -&gt; Result&lt;(), Error&gt; {
 
     for (key, value) in &amp;authors {
         let author = Author {
-            id: 0,
+            _id: 0,
             name: key.to_string(),
             country: value.to_string()
         };
 
-        conn.execute(&quot;INSERT INTO author (name, country) VALUES ($1, $2)&quot;,
-                 &amp;[&amp;author.name, &amp;author.country])?;
+        client.execute(
+                &quot;INSERT INTO author (name, country) VALUES ($1, $2)&quot;,
+                &amp;[&amp;author.name, &amp;author.country],
+        )?;
     }
 
-    for row in &amp;conn.query(&quot;SELECT id, name, country FROM author&quot;, &amp;[])? {
+    for row in client.query(&quot;SELECT id, name, country FROM author&quot;, &amp;[])? {
         let author = Author {
-            id: row.get(0),
+            _id: row.get(0),
             name: row.get(1),
             country: row.get(2),
         };
@@ -225,7 +230,7 @@ fn main() -&gt; Result&lt;(), Error&gt; {
 <h2><a class="header" href="#aggregate-data" id="aggregate-data">Aggregate data</a></h2>
 <p><a href="https://docs.rs/postgres/0.15.2/postgres/"><img src="https://badge-cache.kominick.com/crates/v/postgres.svg?label=postgres" alt="postgres-badge" /></a> <a href="https://crates.io/categories/database"><img src="https://badge-cache.kominick.com/badge/database--x.svg?style=social" alt="cat-database-badge" /></a></p>
 <p>This recipe lists the nationalities of the first 7999 artists in the database of the <a href="https://github.com/MuseumofModernArt/collection/blob/master/Artists.csv"><code>Museum of Modern Art</code></a> in descending order.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use postgres::{Connection, Error, TlsMode};
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use postgres::{Client, Error, NoTls};
 
 struct Nation {
     nationality: String,
@@ -233,12 +238,12 @@ struct Nation {
 }
 
 fn main() -&gt; Result&lt;(), Error&gt; {
-    let conn = Connection::connect(
+    let mut client = Client::connect(
         &quot;postgresql://postgres:postgres@127.0.0.1/moma&quot;,
-        TlsMode::None,
+        NoTls,
     )?;
 
-    for row in &amp;conn.query 
+    for row in client.query 
 	(&quot;SELECT nationality, COUNT(nationality) AS count 
 	FROM artists GROUP BY nationality ORDER BY count DESC&quot;, &amp;[])? {
         

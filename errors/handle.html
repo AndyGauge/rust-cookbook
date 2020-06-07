@@ -199,14 +199,12 @@ fn main() {
 <p>The  <a href="https://docs.rs/error-chain/">error-chain</a> crate makes <a href="https://docs.rs/error-chain/*/error_chain/#matching-errors">matching</a> on different error types returned by
 a function possible and relatively compact. <a href="https://docs.rs/error-chain/*/error_chain/example_generated/enum.ErrorKind.html"><code>ErrorKind</code></a> determines the error
 type.</p>
-<p>Uses <a href="https://docs.rs/reqwest/">reqwest</a> to query a random integer generator web service.  Converts
+<p>Uses <a href="https://docs.rs/reqwest/">reqwest</a>::<a href="https://docs.rs/reqwest/*/reqwest/blocking/index.html">blocking</a> to query a random integer generator web service.  Converts
 the string response into an integer. The Rust standard library,
 <a href="https://docs.rs/reqwest/">reqwest</a>, and the web service can all generate errors. Well defined Rust errors
 use <a href="https://docs.rs/error-chain/*/error_chain/#foreign-links"><code>foreign_links</code></a>. An additional <a href="https://docs.rs/error-chain/*/error_chain/example_generated/enum.ErrorKind.html"><code>ErrorKind</code></a> variant for the web service
 error uses <code>errors</code> block of the <code>error_chain!</code> macro.</p>
 <pre><pre class="playpen"><code class="language-rust edition2018">use error_chain::error_chain;
-
-use std::io::Read;
 
 error_chain! {
     foreign_links {
@@ -214,39 +212,36 @@ error_chain! {
         Reqwest(reqwest::Error);
         ParseIntError(std::num::ParseIntError);
     }
-
     errors { RandomResponseError(t: String) }
 }
 
-fn parse_response(mut response: reqwest::Response) -&gt; Result&lt;u32&gt; {
-    let mut body = String::new();
-    response.read_to_string(&amp;mut body)?;
-    body.pop();
-    body.parse::&lt;u32&gt;()
-        .chain_err(|| ErrorKind::RandomResponseError(body))
+fn parse_response(response: reqwest::blocking::Response) -&gt; Result&lt;u32&gt; {
+  let mut body = response.text()?;
+  body.pop();
+  body
+    .parse::&lt;u32&gt;()
+    .chain_err(|| ErrorKind::RandomResponseError(body))
 }
 
 fn run() -&gt; Result&lt;()&gt; {
-    let url =
-        format!(&quot;https://www.random.org/integers/?num=1&amp;min=0&amp;max=10&amp;col=1&amp;base=10&amp;format=plain&quot;);
-    let response = reqwest::get(&amp;url)?;
-    let random_value: u32 = parse_response(response)?;
-
-    println!(&quot;a random number between 0 and 10: {}&quot;, random_value);
-
-    Ok(())
+  let url =
+    format!(&quot;https://www.random.org/integers/?num=1&amp;min=0&amp;max=10&amp;col=1&amp;base=10&amp;format=plain&quot;);
+  let response = reqwest::blocking::get(&amp;url)?;
+  let random_value: u32 = parse_response(response)?;
+  println!(&quot;a random number between 0 and 10: {}&quot;, random_value);
+  Ok(())
 }
 
 fn main() {
-    if let Err(error) = run() {
-        match *error.kind() {
-            ErrorKind::Io(_) =&gt; println!(&quot;Standard IO error: {:?}&quot;, error),
-            ErrorKind::Reqwest(_) =&gt; println!(&quot;Reqwest error: {:?}&quot;, error),
-            ErrorKind::ParseIntError(_) =&gt; println!(&quot;Standard parse int error: {:?}&quot;, error),
-            ErrorKind::RandomResponseError(_) =&gt; println!(&quot;User defined error: {:?}&quot;, error),
-            _ =&gt; println!(&quot;Other error: {:?}&quot;, error),
-        }
+  if let Err(error) = run() {
+    match *error.kind() {
+      ErrorKind::Io(_) =&gt; println!(&quot;Standard IO error: {:?}&quot;, error),
+      ErrorKind::Reqwest(_) =&gt; println!(&quot;Reqwest error: {:?}&quot;, error),
+      ErrorKind::ParseIntError(_) =&gt; println!(&quot;Standard parse int error: {:?}&quot;, error),
+      ErrorKind::RandomResponseError(_) =&gt; println!(&quot;User defined error: {:?}&quot;, error),
+      _ =&gt; println!(&quot;Other error: {:?}&quot;, error),
     }
+  }
 }
 </code></pre></pre>
 <h2><a class="header" href="#obtain-backtrace-of-complex-error-scenarios" id="obtain-backtrace-of-complex-error-scenarios">Obtain backtrace of complex error scenarios</a></h2>

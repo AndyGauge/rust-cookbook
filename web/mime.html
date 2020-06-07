@@ -219,25 +219,24 @@ fn main() {
 found in the <a href="https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Type">Content-Type</a> header. <a href="https://docs.rs/reqwest/*/reqwest/header/struct.HeaderMap.html#method.get"><code>reqwest::header::HeaderMap::get</code></a> retrieves
 the header as a <a href="https://docs.rs/reqwest/*/reqwest/header/struct.HeaderValue.html"><code>reqwest::header::HeaderValue</code></a>, which can be converted to a
 string. The <code>mime</code> crate can then parse that, yielding a <a href="https://docs.rs/mime/*/mime/struct.Mime.html"><code>mime::Mime</code></a> value.</p>
-<p>The <code>mime</code> crate also defines some commonly used MIME types.</p>
+<p>The <a href="https://docs.rs/mime/*/mime/struct.Mime.html"><code>mime</code></a> crate also defines some commonly used MIME types.</p>
 <p>Note that the <a href="https://docs.rs/reqwest/*/reqwest/header/index.html"><code>reqwest::header</code></a> module is exported from the <a href="https://docs.rs/http/*/http/"><code>http</code></a> crate.</p>
-<pre><pre class="playpen"><code class="language-rust edition2018 no_run"><span class="boring">use error_chain::error_chain;
-</span>
+<pre><pre class="playpen"><code class="language-rust edition2018 no_run">use error_chain::error_chain;
 use mime::Mime;
 use std::str::FromStr;
 use reqwest::header::CONTENT_TYPE;
 
-<span class="boring">
-</span><span class="boring">error_chain! {
-</span><span class="boring">   foreign_links {
-</span><span class="boring">       Reqwest(reqwest::Error);
-</span><span class="boring">       Header(reqwest::header::ToStrError);
-</span><span class="boring">       Mime(mime::FromStrError);
-</span><span class="boring">   }
-</span><span class="boring">}
-</span>
-fn main() -&gt; Result&lt;()&gt; {
-    let response = reqwest::get(&quot;https://www.rust-lang.org/logos/rust-logo-32x32.png&quot;)?;
+ error_chain! {
+    foreign_links {
+        Reqwest(reqwest::Error);
+        Header(reqwest::header::ToStrError);
+        Mime(mime::FromStrError);
+    }
+ }
+
+#[tokio::main]
+async fn main() -&gt; Result&lt;()&gt; {
+    let response = reqwest::get(&quot;https://www.rust-lang.org/logos/rust-logo-32x32.png&quot;).await?;
     let headers = response.headers();
 
     match headers.get(CONTENT_TYPE) {
