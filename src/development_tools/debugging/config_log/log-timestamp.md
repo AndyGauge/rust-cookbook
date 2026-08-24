@@ -7,19 +7,20 @@ Each log entry calls [`Local::now`] to get the current [`DateTime`] in local
 timezone and uses [`DateTime::format`] with [`strftime::specifiers`] to format
 a timestamp used in the final log.
 
-The example calls [`Builder::format`] to set a closure which formats each
+This recipe calls [`Builder::format`] to set a closure which formats each
 message text with timestamp, [`Record::level`] and body ([`Record::args`]).
 
 ```rust,edition2018
-use std::io::Write;
 use chrono::Local;
 use env_logger::Builder;
 use log::LevelFilter;
+use std::io::Write;
 
 fn main() {
     Builder::new()
         .format(|buf, record| {
-            writeln!(buf,
+            writeln!(
+                buf,
                 "{} [{}] - {}",
                 Local::now().format("%Y-%m-%dT%H:%M:%S"),
                 record.level(),

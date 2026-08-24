@@ -7,7 +7,7 @@ status to determine if the command was successful. The command output is capture
 as a [`String`] using [`String::from_utf8`].
 
 ```rust,edition2018,no_run
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
 use std::process::Command;
 
 fn main() -> Result<()> {
@@ -26,4 +26,5 @@ fn main() -> Result<()> {
 
 [`Command`]: https://doc.rust-lang.org/std/process/struct.Command.html
 [`Output`]: https://doc.rust-lang.org/std/process/struct.Output.html
-[`Regex`]: https://docs.rs/regex/*/regex/struct.Regex.html
+[`String::from_utf8`]: https://doc.rust-lang.org/std/string/struct.String.html#method.from_utf8
+[`String`]: https://doc.rust-lang.org/std/string/struct.String.html

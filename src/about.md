@@ -52,18 +52,12 @@ All recipes in the cookbook are full, self contained programs, so
 that they may be copied directly into your own projects for
 experimentation. To do so follow the instructions below.
 
-Consider this example for "generate random numbers within a range":
+Consider this recipe for "generate random numbers within a range":
 
 [![rand-badge]][rand] [![cat-science-badge]][cat-science]
 
-```rust,edition2018
-use rand::Rng;
-
-fn main() {
-    let mut rng = rand::rng();
-    let random_number: u32 = rng.random();
-    println!("Random number: {}", random_number);
-}
+```rust
+{{#include ../crates/algorithms/randomness/src/bin/rand.rs::7 }}
 ```
 
 To work with it locally we can run the following commands to create
@@ -77,28 +71,26 @@ cd my-example
 
 Now, we also need to add the necessary crates to [Cargo.toml], as
 indicated by the crate badges, in this case just "rand". To do so,
-we'll use the `cargo add` command, which is provided by the
-[`cargo-edit`] crate, which we need to install first:
+we'll use the `cargo add` command:
 
 ```sh
-cargo install cargo-edit
 cargo add rand
 ```
 
 Now you can replace `src/main.rs` with the full contents of the
-example and run it:
+recipe and run it:
 
 ```sh
 cargo run
 ```
 
-The crate badges that accompany the examples link to the crates' full
+The crate badges that accompany the recipes link to the crates' full
 documentation on [docs.rs], and is often the next documentation you
 should read after deciding which crate suites your purpose.
 
 ## A note about error handling
 Rust has [`std::error::Trait`] which is implemented to handle exceptions.
-This cookbook uses [`anyhow`] for simplified error handling in examples,
+This cookbook uses [`anyhow`] for simplified error handling in recipes,
 which provides easy error propagation and context. For library authors,
 [`thiserror`] provides a more structured approach using derive macros
 to create custom error types.
@@ -122,11 +114,19 @@ At present the cookbook is focused on the standard library, and on
 common programming tasks, and that the rest of the ecosystem builds
 off of.
 
-The cookbook is closely tied to the [Rust Libz Blitz], a project to
-identify, and improve the quality of such crates, and so it largely
-defers crate selection to that project. Any crates that have already
-been evaluated as part of that process are in scope for the cookbook,
-as are crates that are pending evaluation.
+A crate is in scope for the cookbook if it meets one of these bars:
+
+- It is the (or a) recommendation for its problem domain on
+  [blessed.rs], a curated guide to which crate to reach for in a given
+  situation.
+- It ranks at or near the top of its [crates.io] category, sorted by
+  downloads. Category rank matters more than raw download count, since
+  aggregate downloads favor old, low-level crates (like `libc` or
+  `syn`) that aren't cookbook material on their own.
+
+Either way, the crate should also be actively maintained (a release or
+commit within the last year), have [docs.rs] documentation, and use a
+standard OSI license.
 
 {{#include links.md}}
 
@@ -134,11 +134,10 @@ as are crates that are pending evaluation.
 [error-docs]: https://doc.rust-lang.org/book/ch09-00-error-handling.html
 [error-blog]: https://brson.github.io/2016/11/30/starting-with-error-chain
 [error-chain]: https://docs.rs/error-chain/
-[Rust Libz Blitz]: https://internals.rust-lang.org/t/rust-libz-blitz/5184
+[blessed.rs]: https://blessed.rs
 [crates.io]: https://crates.io
 [docs.rs]: https://docs.rs
 [Cargo.toml]: http://doc.crates.io/manifest.html
 [`anyhow`]: https://docs.rs/anyhow/latest/anyhow/
-[`cargo-edit`]: https://github.com/killercup/cargo-edit
 [`std::error::Trait`]: https://doc.rust-lang.org/std/error/trait.Error.html
 [`thiserror`]: https://docs.rs/thiserror/latest/thiserror/

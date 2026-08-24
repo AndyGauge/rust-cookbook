@@ -2,7 +2,7 @@
 
 [![crossbeam-badge]][crossbeam] [![cat-concurrency-badge]][cat-concurrency]
 
-This example uses the [crossbeam] and [crossbeam-channel] crates to create
+This recipe uses the [crossbeam] and [crossbeam-channel] crates to create
 a parallel pipeline, similar to that described in the ZeroMQ [guide]
 There is a data source and a data sink, with data being processed by two worker
 threads in parallel on its way from the source to the sink.
@@ -25,9 +25,9 @@ think of the calls to `drop` as signaling that no more messages will be sent.
 
 
 ```rust,edition2018
+use crossbeam::channel::bounded;
 use std::thread;
 use std::time::Duration;
-use crossbeam::channel::bounded;
 
 fn main() {
     let (snd1, rcv1) = bounded(1);
@@ -53,11 +53,10 @@ fn main() {
             let (sendr, recvr) = (snd2.clone(), rcv1.clone());
             // Spawn workers in separate threads
             s.spawn(move |_| {
-            thread::sleep(Duration::from_millis(500));
+                thread::sleep(Duration::from_millis(500));
                 // Receive until channel closes
                 for msg in recvr.iter() {
-                    println!("Worker {:?} received {}.",
-                             thread::current().id(), msg);
+                    println!("Worker {:?} received {}.", thread::current().id(), msg);
                     sendr.send(msg * 2).unwrap();
                 }
             });
@@ -70,7 +69,8 @@ fn main() {
         for msg in rcv2.iter() {
             println!("Sink received {}", msg);
         }
-    }).unwrap();
+    })
+    .unwrap();
 }
 ```
 

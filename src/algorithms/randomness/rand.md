@@ -8,8 +8,8 @@ range of the type, and floating point numbers are uniformly distributed from 0 u
 including 1.
 
 ```rust
-{{#include ../../../crates/algorithms/randomness/src/bin/rand.rs }}
+{{#include ../../../crates/algorithms/randomness/src/bin/rand.rs::7 }}
 ```
 
-[`rand::Rng`]: https://docs.rs/rand/latest/rand/trait.Rng.html
-[`rand::rng()`]: https://docs.rs/rand/latest/rand/fn.rng.html
+[`rand::Rng`]: https://docs.rs/rand/0.9/rand/trait.Rng.html
+[`rand::rng()`]: https://docs.rs/rand/0.9/rand/fn.rng.html

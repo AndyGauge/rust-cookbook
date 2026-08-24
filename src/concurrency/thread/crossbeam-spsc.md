@@ -2,16 +2,16 @@
 
 [![crossbeam-badge]][crossbeam] [![cat-concurrency-badge]][cat-concurrency]
 
-This example demonstrates the use of [crossbeam-channel] in a single producer, single
-consumer (SPSC) setting. We build off the [ex-crossbeam-spawn] example by using
+This recipe demonstrates the use of [crossbeam-channel] in a single producer, single
+consumer (SPSC) setting. We build off the [ex-crossbeam-spawn] recipe by using
 [`crossbeam::scope`] and [`Scope::spawn`] to manage the producer thread. Data is
 exchanged between the two threads using a [`crossbeam_channel::unbounded`]
 channel, meaning there is no limit to the number of storeable messages. The
 producer thread sleeps for half a second in between messages.
 
 ```rust,edition2018
-use std::{thread, time};
 use crossbeam::channel::unbounded;
+use std::{thread, time};
 
 fn main() {
     let (snd, rcv) = unbounded();
@@ -23,7 +23,8 @@ fn main() {
                 thread::sleep(time::Duration::from_millis(100));
             }
         });
-    }).unwrap();
+    })
+    .unwrap();
     for _ in 0..n_msgs {
         let msg = rcv.recv().unwrap();
         println!("Received {}", msg);

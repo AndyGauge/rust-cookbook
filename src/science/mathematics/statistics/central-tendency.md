@@ -2,9 +2,9 @@
 
 [![std-badge]][std] [![cat-science-badge]][cat-science]
 
-These examples calculate measures of central tendency for a data set contained within a Rust array. There may be no mean, median or mode to calculate for an empty set of data, so each function returns an [`Option`] to be handled by the caller.
+This recipe calculates measures of central tendency for a data set contained within a Rust array. There may be no mean, median or mode to calculate for an empty set of data, so each function returns an [`Option`] to be handled by the caller.
 
-The first example calculates the mean (the sum of all measurements divided by the number of measurements in the set) by producing an iterator of references over the data, and using [`sum`] and [`len`] to determine the total value and count of values respectively.
+The first function calculates the mean (the sum of all measurements divided by the number of measurements in the set) by producing an iterator of references over the data, and using [`sum`] and [`len`] to determine the total value and count of values respectively.
 
 ```rust,edition2018
 fn main() {
@@ -14,15 +14,15 @@ fn main() {
     let count = data.len();
 
     let mean = match count {
-       positive if positive > 0 => Some(sum  / count as f32),
-       _ => None
+        positive if positive > 0 => Some(sum / count as f32),
+        _ => None,
     };
 
     println!("Mean of the data is {:?}", mean);
 }
 ```
 
-The second example calculates the median using the quickselect algorithm, which avoids a full [`sort`] by sorting only partitions of the data set known to possibly contain the median. This uses [`cmp`] and [`Ordering`] to succinctly decide the next partition to examine, and [`split_at`] to choose an arbitrary pivot for the next partition at each step.
+The second function calculates the median using the quickselect algorithm, which avoids a full [`sort`] by sorting only partitions of the data set known to possibly contain the median. This uses [`cmp`] and [`Ordering`] to succinctly decide the next partition to examine, and [`split_at`] to choose an arbitrary pivot for the next partition at each step.
 
 ```rust,edition2018
 use std::cmp::Ordering;
@@ -33,18 +33,17 @@ fn partition(data: &[i32]) -> Option<(Vec<i32>, i32, Vec<i32>)> {
         _ => {
             let (pivot_slice, tail) = data.split_at(1);
             let pivot = pivot_slice[0];
-            let (left, right) = tail.iter()
-                .fold((vec![], vec![]), |mut splits, next| {
-                    {
-                        let (ref mut left, ref mut right) = &mut splits;
-                        if next < &pivot {
-                            left.push(*next);
-                        } else {
-                            right.push(*next);
-                        }
+            let (left, right) = tail.iter().fold((vec![], vec![]), |mut splits, next| {
+                {
+                    let (ref mut left, ref mut right) = &mut splits;
+                    if next < &pivot {
+                        left.push(*next);
+                    } else {
+                        right.push(*next);
                     }
-                    splits
-                });
+                }
+                splits
+            });
 
             Some((left, pivot, right))
         }
@@ -64,7 +63,7 @@ fn select(data: &[i32], k: usize) -> Option<i32> {
                 Ordering::Greater => select(&left, k),
                 Ordering::Less => select(&right, k - (pivot_idx + 1)),
             }
-        },
+        }
     }
 }
 
@@ -78,10 +77,10 @@ fn median(data: &[i32]) -> Option<f32> {
 
             match (fst_med, snd_med) {
                 (Some(fst), Some(snd)) => Some((fst + snd) as f32 / 2.0),
-                _ => None
+                _ => None,
             }
-        },
-        odd => select(data, odd / 2).map(|x| x as f32)
+        }
+        odd => select(data, odd / 2).map(|x| x as f32),
     }
 }
 
@@ -99,7 +98,7 @@ fn main() {
 }
 ```
 
-The final example calculates the  mode using a mutable [`HashMap`] to collect counts of each distinct integer from the set, using a [`fold`] and the [`entry`] API. The most frequent value in the [`HashMap`] surfaces with [`max_by_key`].
+The final function calculates the  mode using a mutable [`HashMap`] to collect counts of each distinct integer from the set, using a [`fold`] and the [`entry`] API. The most frequent value in the [`HashMap`] surfaces with [`max_by_key`].
 
 ```rust,edition2018
 use std::collections::HashMap;

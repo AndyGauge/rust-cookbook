@@ -44,6 +44,12 @@ To run the cookbook test suite:
 cargo test
 ```
 
+To run only the skeptic tests (useful when working on examples):
+
+```
+cargo test --test skeptic
+```
+
 ### xtask
 
 To simplify common tasks like testing, building the book, and running linters.
@@ -58,6 +64,12 @@ cargo install mdbook@0.4.43 lychee@0.17.0
 
   ```bash
   cargo xtask test all
+  ```
+
+- To run only the skeptic tests:
+
+  ```bash
+  cargo test --test skeptic
   ```
 
 - To build the book locally:
@@ -75,28 +87,24 @@ run on the continuous integration server.  These linters should be run locally
 before submitting a pull request to ensure there are no dead links or spelling
 errors made.
 
-To install the link checker, review the documentation for [python] to install
-python 3.6 and pip3.  Installing link-checker once the dependencies are met
-is done with pip3.
+To install the link checker, use Cargo:
 
-```
-[sudo] pip3 install link-checker==0.1.0
+```bash
+cargo install lychee@0.17.0
 ```
 
-Alternatively, add the user install directory (probably `~/.local/bin`) to
-your PATH variable and install link-checker for your user.
+Checking the links of the book locally can be done with the xtask tool.
+First, ensure the book is built with mdBook.
 
-```
-pip3 install --user link-checker==0.1.0
+```bash
+cargo xtask book
+cargo xtask test link
 ```
 
-Checking the links of the book locally first requires the book to be built
-with mdBook.  From the root directory of the cookbook, the following commands
-run the link checker.
+Alternatively, you can run lychee directly to check all files in the repository:
 
-```
-mdbook build
-link-checker ./book
+```bash
+lychee --base . --config ./ci/lychee.toml .
 ```
 
 The aspell binary provides spell checking.  Apt packages provide installation
@@ -132,7 +140,7 @@ Pressing `a` or `l` will not add the word to the custom dictionary.
 If there are no errors, it will just print the local Aspell version and exit.
 
 [mdbook]: https://github.com/rust-lang-nursery/mdBook
-[python]: https://packaging.python.org/tutorials/installing-packages/#install-pip-setuptools-and-wheel
+[lychee]: https://github.com/lycheeverse/lychee
 [skeptic]: https://github.com/brson/rust-skeptic
 
 
@@ -141,40 +149,33 @@ If there are no errors, it will just print the local Aspell version and exit.
 This project is intended to be simple to contribute to, and to always
 have obvious next work items available. If at any time there is not
 something obvious to contribute, that is a bug. Feel free to ask for
-additional support at the
-[Rust Ecosystem Working Group](https://gitter.im/rust-lang/WG-ecosystem).
+additional support in the cookbook's Zulip channel,
+[#t-lang-docs/cookbook](https://rust-lang.zulipchat.com/#narrow/channel/520946-t-lang-docs.2Fcookbook).
 
 The development process for the cookbook is presently oriented around
 crates: we decide which crates to represent in the cookbook, then come
 up with example use cases to write, then write the examples. And those
 are the three basic, recurring types of contributions needed.
 
-The development process for the cookbook today is tied to the [libz
-blitz], a broader project to improve the Rust crate ecosystem, and the
-cookbook presently represents the crates under consideration there.
-The easiest way to find the most immediate work needed for the
-cookbook is to follow the "What's next" section at the top of that
-thread, which should at all times link to something to contribute to
-the cookbook.
-
-Otherwise, look for GitHub issues with the [example] tag. The simplest
-way to contribute is to claim one of these examples, and submit a PR
-adding it. If you do claim one, please leave a comment saying so, so
-others don't accidentally duplicate your work.
+Look for GitHub issues with the [example] tag. The simplest way to
+contribute is to claim one of these examples, and submit a PR adding
+it. If you do claim one, please leave a comment saying so, so others
+don't accidentally duplicate your work.
 
 If you have an idea for an example for a specific crate, please
 suggest it on the relevant [tracking issue].
 
-Please do not submit examples for crates not yet represented in the
-cookbook, unless it is part of the libz blitz crate schedule.
-Contribution will be open to a broader set of crates in the future.
-For more about which crates are represented in the cookbook, see ["a
-note about crate representation"][which-crates] in the cookbook.
+A crate should generally only be added to the cookbook if it is the
+(or a) recommendation for its problem domain on [blessed.rs], or ranks
+at or near the top of its [crates.io] category by downloads. For more
+about which crates are represented in the cookbook, see ["a note about
+crate representation"][which-crates] in the cookbook.
 
 [example]: https://github.com/rust-lang-nursery/rust-cookbook/issues?q=is%3Aissue+is%3Aopen+label%3Aexample
 [tracking issue]: https://github.com/rust-lang-nursery/rust-cookbook/issues?q=is%3Aissue+is%3Aopen+label%3A%22tracking+issue%22
 [which-crates]: https://rust-lang-nursery.github.io/rust-cookbook/about.html#a-note-about-crate-representation
-[libz blitz]: https://internals.rust-lang.org/t/rust-libz-blitz/5184
+[blessed.rs]: https://blessed.rs
+[crates.io]: https://crates.io
 
 ## Adding an example
 

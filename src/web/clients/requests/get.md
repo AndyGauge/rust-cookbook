@@ -8,7 +8,7 @@ status and headers. Reads HTTP response body into an allocated [`String`]
 using [`read_to_string`].
 
 
-```rust,edition2018,no_run
+```rust,edition2024,no_run
 use anyhow::Result;
 use std::io::Read;
 
@@ -23,17 +23,14 @@ fn main() -> Result<()> {
 
     Ok(())
 }
-
 ```
 
 ## Async
 
 A similar approach can be used by including the [`tokio`] executor
 to make the main function asynchronous, retrieving the same information.
-Make sure to add tokio = {version = "1.21.2", features = ["full"]} to
-your cargo.toml file.
 
-In this example, [`tokio::main`] handles all the heavy executor setup
+In this recipe, [`tokio::main`] handles all the heavy executor setup
 and allows sequential code implemented without blocking until `.await`.
 
 Uses the asynchronous versions of [reqwest], both [`reqwest::get`] and
@@ -55,10 +52,10 @@ async fn main() -> Result<()> {
 ```
 
 [`read_to_string`]: https://doc.rust-lang.org/std/io/trait.Read.html#method.read_to_string
-[`reqwest::blocking::get`]: https://docs.rs/reqwest/*/reqwest/blocking/fn.get.html
-[`reqwest::blocking::Response`]: https://docs.rs/reqwest/*/reqwest/blocking/struct.Response.html
-[`reqwest::get`]: https://docs.rs/reqwest/*/reqwest/fn.get.html
-[`reqwest::Response`]: https://docs.rs/reqwest/*/reqwest/struct.Response.html
+[`reqwest::blocking::get`]: https://docs.rs/reqwest/latest/reqwest/blocking/fn.get.html
+[`reqwest::blocking::Response`]: https://docs.rs/reqwest/latest/reqwest/blocking/struct.Response.html
+[`reqwest::get`]: https://docs.rs/reqwest/latest/reqwest/fn.get.html
+[`reqwest::Response`]: https://docs.rs/reqwest/latest/reqwest/struct.Response.html
 [`String`]: https://doc.rust-lang.org/std/string/struct.String.html
-[`tokio`]: https://docs.rs/crate/tokio/0.2.11
-[`tokio::main`]: https://tokio.rs/tokio/tutorial/hello-tokio#the-code
+[`tokio`]: https://docs.rs/tokio/latest/tokio/
+[`tokio::main`]: https://docs.rs/tokio/latest/tokio/attr.main.html

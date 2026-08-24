@@ -9,11 +9,11 @@ representation of the data.
 Similarly, a `HEXUPPER::decode` method is provided which takes a `&[u8]` and
 returns a `Vec<u8>` if the input data is successfully decoded.
 
-The example below converts `&[u8]` data to hexadecimal equivalent.  Compares this
+The recipe below converts `&[u8]` data to hexadecimal equivalent.  Compares this
 value to the expected value.
 
 ```rust,edition2018
-use data_encoding::{HEXUPPER, DecodeError};
+use data_encoding::{DecodeError, HEXUPPER};
 
 fn main() -> Result<(), DecodeError> {
     let original = b"The quick brown fox jumps over the lazy dog.";

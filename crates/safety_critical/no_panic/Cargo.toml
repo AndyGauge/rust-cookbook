@@ -1,0 +1,15 @@
+[package]
+name = "no-panic-example"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+no-panic = "0.1"
+
+[lints.clippy]
+# `safe_lookup` spells out both arms on purpose: the example is about
+# exhaustively handling every path, not about the shortest expression.
+manual_map = "allow"

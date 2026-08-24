@@ -1,6 +1,6 @@
 # Web Programming
 
-## Scraping Web Pages
+**Scraping Web Pages**
 
 | Recipe | Crates | Categories |
 |--------|--------|------------|
@@ -8,7 +8,7 @@
 | [Check webpage for broken links][ex-check-broken-links] | [![reqwest-badge]][reqwest] [![select-badge]][select] [![url-badge]][url] | [![cat-net-badge]][cat-net] |
 | [Extract all unique links from a MediaWiki markup][ex-extract-mediawiki-links] | [![reqwest-badge]][reqwest] [![regex-badge]][regex] | [![cat-net-badge]][cat-net] |
 
-## Uniform Resource Locations (URL)
+**Uniform Resource Locations (URL)**
 
 | Recipe | Crates | Categories |
 |--------|--------|------------|
@@ -18,7 +18,7 @@
 | [Extract the URL origin (scheme / host / port)][ex-url-origin] | [![url-badge]][url] | [![cat-net-badge]][cat-net] |
 | [Remove fragment identifiers and query pairs from a URL][ex-url-rm-frag] | [![url-badge]][url] | [![cat-net-badge]][cat-net] |
 
-## Media Types (MIME)
+**Media Types (MIME)**
 
 | Recipe | Crates | Categories |
 |--------|--------|------------|
@@ -26,7 +26,7 @@
 | [Get MIME type from filename][ex-mime-from-filename] | [![mime-badge]][mime] | [![cat-encoding-badge]][cat-encoding] |
 | [Parse the MIME type of a HTTP response][ex-http-response-mime-type] | [![mime-badge]][mime] [![reqwest-badge]][reqwest] | [![cat-net-badge]][cat-net] [![cat-encoding-badge]][cat-encoding] |
 
-## Clients
+**Clients**
 
 | Recipe | Crates | Categories |
 |--------|--------|------------|
@@ -40,11 +40,18 @@
 | [Make a partial download with HTTP range headers][ex-progress-with-range] | [![reqwest-badge]][reqwest] | [![cat-net-badge]][cat-net] |
 | [POST a file to paste-rs][ex-file-post] | [![reqwest-badge]][reqwest] | [![cat-net-badge]][cat-net] |
 
-## Web Authentication
+**Web Authentication**
 
 | Recipe | Crates | Categories |
 |--------|--------|------------|
 | [Basic Authentication][ex-basic-authentication] | [![reqwest-badge]][reqwest] | [![cat-net-badge]][cat-net] |
+
+**Full Stack Web**
+
+| Recipe | Crates | Categories |
+|--------|--------|------------|
+| [Return filtered results as HTML][ex-leptos-render] | [![leptos-badge]][leptos] [![leptos-router-badge]][leptos-router] [![leptos-axum-badge]][leptos-axum] [![axum-badge]][axum] [![tokio-badge]][tokio] | [![cat-net-badge]][cat-net] |
+| [Synchronize component state with the server][ex-leptos-hydrate] | [![leptos-badge]][leptos] [![leptos-axum-badge]][leptos-axum] [![axum-badge]][axum] [![tokio-badge]][tokio] [![wasm-bindgen-badge]][wasm-bindgen] | [![cat-net-badge]][cat-net] |
 
 [ex-extract-links-webpage]: web/scraping.html#extract-all-links-from-a-webpage-html
 [ex-check-broken-links]: web/scraping.html#check-a-webpage-for-broken-links
@@ -73,5 +80,8 @@
 [ex-file-post]: web/clients/download.html#post-a-file-to-paste-rs
 
 [ex-basic-authentication]: web/clients/authentication.html#basic-authentication
+
+[ex-leptos-render]: web/leptos.html#return-filtered-results-as-html
+[ex-leptos-hydrate]: web/leptos.html#synchronize-component-state-with-the-server
 
 {{#include links.md}}

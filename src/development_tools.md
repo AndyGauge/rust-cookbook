@@ -1,6 +1,6 @@
 # Development Tools
 
-## Debugging
+**Debugging**
 
 | Recipe                                                                     | Crates                                                                          | Categories                              |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------- |
@@ -24,7 +24,7 @@
 [ex-log-timestamp]: development_tools/debugging/config_log.html#include-timestamp-in-log-messages
 [ex-log-custom]: development_tools/debugging/config_log.html#log-messages-to-a-custom-location
 
-## Versioning
+**Versioning**
 
 | Recipe                                                                | Crates                    | Categories                                                                    |
 | --------------------------------------------------------------------- | ------------------------- | ----------------------------------------------------------------------------- |
@@ -34,13 +34,14 @@
 | [Find the latest version satisfying given range][ex-semver-latest]    | [![semver-badge]][semver] | [![cat-config-badge]][cat-config]                                             |
 | [Check external command version for compatibility][ex-semver-command] | [![semver-badge]][semver] | [![cat-text-processing-badge]][cat-text-processing] [![cat-os-badge]][cat-os] |
 
-## Build Time
+**Build Time**
 
 | Recipe                                                                           | Crates            | Categories                                              |
 | -------------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------- |
 | [Compile and link statically to a bundled C library][ex-cc-static-bundled]       | [![cc-badge]][cc] | [![cat-development-tools-badge]][cat-development-tools] |
 | [Compile and link statically to a bundled C++ library][ex-cc-static-bundled-cpp] | [![cc-badge]][cc] | [![cat-development-tools-badge]][cat-development-tools] |
 | [Compile a C library while setting custom defines][ex-cc-custom-defines]         | [![cc-badge]][cc] | [![cat-development-tools-badge]][cat-development-tools] |
+| [Compile and link dynamically to a C++ shared library][ex-cc-shared-library]     | [![cc-badge]][cc] | [![cat-development-tools-badge]][cat-development-tools] |
 
 [ex-semver-increment]: development_tools/versioning.html#parse-and-increment-a-version-string
 [ex-semver-complex]: development_tools/versioning.html#parse-a-complex-version-string
@@ -50,5 +51,6 @@
 [ex-cc-static-bundled]: development_tools/build_tools.html#compile-and-link-statically-to-a-bundled-c-library
 [ex-cc-static-bundled-cpp]: development_tools/build_tools.html#compile-and-link-statically-to-a-bundled-c-library-1
 [ex-cc-custom-defines]: development_tools/build_tools.html#compile-a-c-library-while-setting-custom-defines
+[ex-cc-shared-library]: development_tools/build_tools.html#compile-and-link-dynamically-to-a-c-shared-library
 
 {{#include links.md}}
