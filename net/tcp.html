@@ -28,7 +28,7 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../theme/custom-eb6e2c8a.css">
+        <link rel="stylesheet" href="../theme/custom-ef920558.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-ca761a38.js";
+            window.path_to_searchindex_js = "../searchindex-89d877e8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-ed91af3c.js"></script>
+        <script src="../toc-8fc2ecc7.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,11 +183,11 @@
                     <main>
                         <h1 id="tcp"><a class="header" href="#tcp">TCP</a></h1>
 <h2 id="listen-on-unused-port-tcpip"><a class="header" href="#listen-on-unused-port-tcpip">Listen on unused port TCP/IP</a></h2>
-<p><a href="https://doc.rust-lang.org/std"><img src="https://img.shields.io/badge/std-1.29.1-blue.svg" alt="std-badge"></a> <a href="https://crates.io/categories/network-programming"><img src="https://img.shields.io/badge/net--x.svg?style=social" alt="cat-net-badge"></a></p>
+<p><span class="crate-chip"><a class="crate-chip-name" href="https://doc.rust-lang.org/std" title="Open the std documentation">std</a><a class="crate-chip-repo" href="https://github.com/rust-lang/rust" title="Open std source repository" aria-label="std source repository"><svg viewbox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg></a></span> <a class="crate-chip cat-chip" href="https://crates.io/categories/network-programming">Net</a></p>
 <p>In this recipe, the port is displayed on the console, and the program will
 listen until a request is made.  <a href="https://doc.rust-lang.org/std/net/struct.TcpListener.html#method.bind"><code>TcpListener::bind</code></a> uses a random port
 allocated by the OS when requested to bind to port 0.</p>
-<pre class="playground"><code class="language-rust edition2018 no_run">use std::io::{Error, Read};
+<pre class="playground"><code class="language-rust edition2024 no_run">use std::io::{Error, Read};
 use std::net::TcpListener;
 
 fn main() -&gt; Result&lt;(), Error&gt; {
@@ -202,7 +202,7 @@ fn main() -&gt; Result&lt;(), Error&gt; {
     Ok(())
 }</code></pre>
 <h2 id="tcp-echo-server"><a class="header" href="#tcp-echo-server">TCP echo server</a></h2>
-<p><a href="https://doc.rust-lang.org/std"><img src="https://img.shields.io/badge/std-1.29.1-blue.svg" alt="std-badge"></a> <a href="https://crates.io/categories/network-programming"><img src="https://img.shields.io/badge/net--x.svg?style=social" alt="cat-net-badge"></a></p>
+<p><span class="crate-chip"><a class="crate-chip-name" href="https://doc.rust-lang.org/std" title="Open the std documentation">std</a><a class="crate-chip-repo" href="https://github.com/rust-lang/rust" title="Open std source repository" aria-label="std source repository"><svg viewbox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg></a></span> <a class="crate-chip cat-chip" href="https://crates.io/categories/network-programming">Net</a></p>
 <p>When you’re building a TCP client you need a server that behaves predictably.
 An echo server is that server: every byte you send comes back unchanged. Point
 your client at it to check framing, disconnect handling, or timeouts.</p>
@@ -210,7 +210,7 @@ your client at it to check framing, disconnect handling, or timeouts.</p>
 new connection. Spawning a thread per connection keeps the accept loop free for
 the next client. Inside the handler, <a href="https://doc.rust-lang.org/std/io/trait.Read.html#tymethod.read"><code>read</code></a> returning <code>0</code> means the peer
 closed the connection — that’s the cue to drop out of the loop.</p>
-<pre class="playground"><code class="language-rust edition2021 no_run">use std::io::{self, Read, Write};
+<pre class="playground"><code class="language-rust edition2024 no_run">use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 
@@ -239,14 +239,14 @@ fn main() -&gt; io::Result&lt;()&gt; {
     Ok(())
 }</code></pre>
 <h2 id="tcp-client"><a class="header" href="#tcp-client">TCP client</a></h2>
-<p><a href="https://doc.rust-lang.org/std"><img src="https://img.shields.io/badge/std-1.29.1-blue.svg" alt="std-badge"></a> <a href="https://crates.io/categories/network-programming"><img src="https://img.shields.io/badge/net--x.svg?style=social" alt="cat-net-badge"></a></p>
+<p><span class="crate-chip"><a class="crate-chip-name" href="https://doc.rust-lang.org/std" title="Open the std documentation">std</a><a class="crate-chip-repo" href="https://github.com/rust-lang/rust" title="Open std source repository" aria-label="std source repository"><svg viewbox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg></a></span> <a class="crate-chip cat-chip" href="https://crates.io/categories/network-programming">Net</a></p>
 <p>With the echo server from the previous recipe running on <code>127.0.0.1:7878</code>, a
 client can connect, send a message, and read the reply.</p>
 <p><a href="https://doc.rust-lang.org/std/net/struct.TcpStream.html#method.connect"><code>TcpStream::connect</code></a> opens a connection. The returned <a href="https://doc.rust-lang.org/std/net/struct.TcpStream.html"><code>TcpStream</code></a> is both a
 reader and a writer. <a href="https://doc.rust-lang.org/std/io/trait.Write.html#method.write_all"><code>write_all</code></a> sends the request; <a href="https://doc.rust-lang.org/std/io/trait.Read.html#tymethod.read"><code>read</code></a> fills a buffer
 with whatever the server returns. Echo guarantees the bytes round-trip
 unchanged, so the client can assert on what came back.</p>
-<pre class="playground"><code class="language-rust edition2021 no_run">use std::io::{self, Read, Write};
+<pre class="playground"><code class="language-rust edition2024 no_run">use std::io::{self, Read, Write};
 use std::net::TcpStream;
 
 fn main() -&gt; io::Result&lt;()&gt; {
@@ -261,13 +261,13 @@ fn main() -&gt; io::Result&lt;()&gt; {
     Ok(())
 }</code></pre>
 <h2 id="tcp-connect-with-a-timeout"><a class="header" href="#tcp-connect-with-a-timeout">TCP connect with a timeout</a></h2>
-<p><a href="https://doc.rust-lang.org/std"><img src="https://img.shields.io/badge/std-1.29.1-blue.svg" alt="std-badge"></a> <a href="https://crates.io/categories/network-programming"><img src="https://img.shields.io/badge/net--x.svg?style=social" alt="cat-net-badge"></a></p>
+<p><span class="crate-chip"><a class="crate-chip-name" href="https://doc.rust-lang.org/std" title="Open the std documentation">std</a><a class="crate-chip-repo" href="https://github.com/rust-lang/rust" title="Open std source repository" aria-label="std source repository"><svg viewbox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg></a></span> <a class="crate-chip cat-chip" href="https://crates.io/categories/network-programming">Net</a></p>
 <p>Plain <a href="https://doc.rust-lang.org/std/net/struct.TcpStream.html#method.connect"><code>TcpStream::connect</code></a> waits for the kernel to give up on SYN retries.
 When the peer is down or a firewall is silently dropping packets, that can
 take a minute or more. <a href="https://doc.rust-lang.org/std/net/struct.TcpStream.html#method.connect_timeout"><code>TcpStream::connect_timeout</code></a> caps the wait.</p>
 <p>The timeout variant takes a <a href="https://doc.rust-lang.org/std/net/enum.SocketAddr.html"><code>SocketAddr</code></a>, not a string, so resolve the
 hostname first.</p>
-<pre class="playground"><code class="language-rust edition2021 no_run">use std::io;
+<pre class="playground"><code class="language-rust edition2024 no_run">use std::io;
 use std::net::{TcpStream, ToSocketAddrs};
 use std::time::Duration;
 
@@ -287,7 +287,7 @@ fn main() -&gt; io::Result&lt;()&gt; {
     Ok(())
 }</code></pre>
 <h2 id="set-a-read-timeout-on-a-tcp-stream"><a class="header" href="#set-a-read-timeout-on-a-tcp-stream">Set a read timeout on a TCP stream</a></h2>
-<p><a href="https://doc.rust-lang.org/std"><img src="https://img.shields.io/badge/std-1.29.1-blue.svg" alt="std-badge"></a> <a href="https://crates.io/categories/network-programming"><img src="https://img.shields.io/badge/net--x.svg?style=social" alt="cat-net-badge"></a></p>
+<p><span class="crate-chip"><a class="crate-chip-name" href="https://doc.rust-lang.org/std" title="Open the std documentation">std</a><a class="crate-chip-repo" href="https://github.com/rust-lang/rust" title="Open std source repository" aria-label="std source repository"><svg viewbox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg></a></span> <a class="crate-chip cat-chip" href="https://crates.io/categories/network-programming">Net</a></p>
 <p>A default <a href="https://doc.rust-lang.org/std/net/struct.TcpStream.html"><code>TcpStream</code></a> read blocks until data arrives or the peer hangs up.
 If the peer goes silent — process stuck, network partition, slow upstream —
 the read hangs with it. <a href="https://doc.rust-lang.org/std/net/struct.TcpStream.html#method.set_read_timeout"><code>set_read_timeout</code></a> caps the wait.</p>
@@ -296,7 +296,7 @@ the read hangs with it. <a href="https://doc.rust-lang.org/std/net/struct.TcpStr
 breaks on the other platform.</p>
 <p>This recipe stands up a listener that accepts but never sends, then connects
 and reads with a short timeout to prove the timeout fires.</p>
-<pre class="playground"><code class="language-rust edition2021">use std::io::{self, Read};
+<pre class="playground"><code class="language-rust edition2024">use std::io::{self, Read};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 use std::time::Duration;
@@ -325,7 +325,7 @@ fn main() -&gt; io::Result&lt;()&gt; {
     Ok(())
 }</code></pre>
 <h2 id="disable-nagles-algorithm"><a class="header" href="#disable-nagles-algorithm">Disable Nagle’s algorithm</a></h2>
-<p><a href="https://doc.rust-lang.org/std"><img src="https://img.shields.io/badge/std-1.29.1-blue.svg" alt="std-badge"></a> <a href="https://crates.io/categories/network-programming"><img src="https://img.shields.io/badge/net--x.svg?style=social" alt="cat-net-badge"></a></p>
+<p><span class="crate-chip"><a class="crate-chip-name" href="https://doc.rust-lang.org/std" title="Open the std documentation">std</a><a class="crate-chip-repo" href="https://github.com/rust-lang/rust" title="Open std source repository" aria-label="std source repository"><svg viewbox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg></a></span> <a class="crate-chip cat-chip" href="https://crates.io/categories/network-programming">Net</a></p>
 <p>TCP coalesces small writes by default — Nagle’s algorithm — to avoid
 flooding the network with tiny packets. For interactive protocols that’s the
 wrong tradeoff: a typed keystroke or a chat message can sit in the kernel
@@ -333,7 +333,7 @@ buffer for tens of milliseconds waiting for company. <a href="https://doc.rust-l
 Nagle off so each write goes out as its own segment.</p>
 <p>Use it for chat, games, REPL-style protocols, and RPCs where round-trip
 latency matters more than packet count. Leave it on for bulk transfer.</p>
-<pre class="playground"><code class="language-rust edition2021 no_run">use std::io::{self, Write};
+<pre class="playground"><code class="language-rust edition2024 no_run">use std::io::{self, Write};
 use std::net::TcpStream;
 
 fn main() -&gt; io::Result&lt;()&gt; {
@@ -345,7 +345,7 @@ fn main() -&gt; io::Result&lt;()&gt; {
     Ok(())
 }</code></pre>
 <h2 id="half-close-a-tcp-connection"><a class="header" href="#half-close-a-tcp-connection">Half-close a TCP connection</a></h2>
-<p><a href="https://doc.rust-lang.org/std"><img src="https://img.shields.io/badge/std-1.29.1-blue.svg" alt="std-badge"></a> <a href="https://crates.io/categories/network-programming"><img src="https://img.shields.io/badge/net--x.svg?style=social" alt="cat-net-badge"></a></p>
+<p><span class="crate-chip"><a class="crate-chip-name" href="https://doc.rust-lang.org/std" title="Open the std documentation">std</a><a class="crate-chip-repo" href="https://github.com/rust-lang/rust" title="Open std source repository" aria-label="std source repository"><svg viewbox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg></a></span> <a class="crate-chip cat-chip" href="https://crates.io/categories/network-programming">Net</a></p>
 <p>Many request-then-response protocols expect the client to finish sending
 before the server replies: HTTP/1.0, custom RPCs, anything that reads
 until EOF. To say “I’m done sending, give me your reply” without losing the
@@ -353,7 +353,7 @@ ability to read, shut down only the write side with <a href="https://doc.rust-la
 <p>After the half-close the peer sees EOF on its read, can do its work, and
 writes a response that you read normally. <a href="https://doc.rust-lang.org/std/io/trait.Read.html#method.read_to_end"><code>read_to_end</code></a> keeps reading until
 the peer closes its own write half.</p>
-<pre class="playground"><code class="language-rust edition2021 no_run">use std::io::{self, Read, Write};
+<pre class="playground"><code class="language-rust edition2024 no_run">use std::io::{self, Read, Write};
 use std::net::{Shutdown, TcpStream};
 
 fn main() -&gt; io::Result&lt;()&gt; {
@@ -367,7 +367,7 @@ fn main() -&gt; io::Result&lt;()&gt; {
     Ok(())
 }</code></pre>
 <h2 id="non-blocking-tcp-accept"><a class="header" href="#non-blocking-tcp-accept">Non-blocking TCP accept</a></h2>
-<p><a href="https://doc.rust-lang.org/std"><img src="https://img.shields.io/badge/std-1.29.1-blue.svg" alt="std-badge"></a> <a href="https://crates.io/categories/network-programming"><img src="https://img.shields.io/badge/net--x.svg?style=social" alt="cat-net-badge"></a></p>
+<p><span class="crate-chip"><a class="crate-chip-name" href="https://doc.rust-lang.org/std" title="Open the std documentation">std</a><a class="crate-chip-repo" href="https://github.com/rust-lang/rust" title="Open std source repository" aria-label="std source repository"><svg viewbox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg></a></span> <a class="crate-chip cat-chip" href="https://crates.io/categories/network-programming">Net</a></p>
 <p>A normal <a href="https://doc.rust-lang.org/std/net/struct.TcpListener.html#method.accept"><code>accept</code></a> blocks until a client arrives. If a single thread needs
 to do other work between connections — poll a timer, watch another file
 descriptor — flip the listener into non-blocking mode with
@@ -376,7 +376,7 @@ descriptor — flip the listener into non-blocking mode with
 <p>This readiness pattern is the primitive every async runtime uses underneath.
 For production code, reach for <a href="https://docs.rs/mio"><code>mio</code></a> or an async runtime — what follows is
 the manual version of what they automate.</p>
-<pre class="playground"><code class="language-rust edition2021">use std::io::{self, ErrorKind};
+<pre class="playground"><code class="language-rust edition2024">use std::io::{self, ErrorKind};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 use std::time::Duration;
@@ -462,11 +462,10 @@ Keep lines sorted.
         <script src="../book-c22b7243.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../theme/crate-chips-9def0016.js"></script>
-        <script src="../theme/search-index-497830ee.js"></script>
-        <script src="../theme/command-k-241841cf.js"></script>
-        <script src="../theme/quick-search-64e3cc02.js"></script>
-        <script src="../theme/crate-index-6b39868f.js"></script>
+        <script src="../theme/crate-chips-b6c5458f.js"></script>
+        <script src="../theme/command-k-e7e8b5b3.js"></script>
+        <script src="../theme/quick-search-cf9c8228.js"></script>
+        <script src="../theme/crate-index-573f4501.js"></script>
         <script src="../theme/nav-labels-024a746c.js"></script>
 
 
