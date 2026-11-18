@@ -30,14 +30,20 @@
     return !wrapper.classList.contains("hidden");
   }
 
+  // Focus moving into the dialog from outside tells us where to send it back to. (Recording every
+  // outside focus would pick up the throwaway input mdBook focuses when Esc closes the search.)
   var returnTo = null;
   document.addEventListener("focusin", function (e) {
-    if (!wrapper.contains(e.target)) returnTo = e.target;
+    if (isOpen() && wrapper.contains(e.target) && !wrapper.contains(e.relatedTarget)) {
+      returnTo = e.relatedTarget || toggle;
+    }
   });
   var wasOpen = isOpen();
   new MutationObserver(function () {
     var open = isOpen();
-    if (wasOpen && !open && returnTo && document.contains(returnTo)) returnTo.focus();
+    if (wasOpen && !open) {
+      (returnTo && document.contains(returnTo) ? returnTo : toggle).focus();
+    }
     wasOpen = open;
   }).observe(wrapper, { attributes: true, attributeFilter: ["class"] });
 
