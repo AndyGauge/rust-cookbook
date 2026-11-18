@@ -8,7 +8,8 @@
 - [`jiff`] has IANA time zone support built in, using the system's time zone
   database, or a bundled copy on platforms without one. Its [`Span`] and
   [`ZonedDateTime`] types make DST-aware arithmetic the default. It has fewer
-  third-party integrations so far.
+  third-party integrations so far. Its author explains the design in
+  [A datetime library for Rust].
 - `jiff` has reached 1.0, so its API is stable. `chrono` and `time` are still
   pre-1.0, so their APIs may still change.
 
@@ -16,6 +17,7 @@ If your code works with time zones and has no existing `chrono` or `time`
 dependency, `jiff` is worth considering. Otherwise stay with whatever your
 dependencies already use.
 
+[A datetime library for Rust]: https://burntsushi.net/jiff/
 [`chrono`]: https://docs.rs/chrono/
 [`chrono-tz`]: https://docs.rs/chrono-tz/
 [`jiff`]: https://docs.rs/jiff/
